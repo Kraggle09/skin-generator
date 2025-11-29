@@ -1,33 +1,36 @@
 from PIL import Image
 import random
+import json
 
-baseList = ['base0.png']
-hairList = ['hair0.png', 'hair1.png']
-eyeList = ['eye0.png', 'eye1.png']
+baseList = ['base0']
+hairList = ['hair0', 'hair1']
+eyeList = ['eye0', 'eye1']
 
 def main():
     skin = randomSkin()
     skin.save('skin.png')
 
 def randomSkin():
-    img = Image.new('RGBA', (64, 64), (0, 0, 0, 0))
-    img = overlayAndTint(img, f"assets/{random.choice(baseList)}")
-    img = overlayAndTint(img, f"assets/{random.choice(hairList)}", (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100))
-    img = overlayAndTint(img, f"assets/{random.choice(eyeList)}", (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100))
+    img = Image.open(f"assets/{random.choice(baseList)}.png")
+    img = overlay(img, random.choice(eyeList))
     return img
 
-def overlayAndTint(image, overlay_path, tint_color=None):
-    overlay = Image.open(overlay_path).convert("RGBA")
-    if tint_color:
-        a = overlay.split()[3]
-        tinted = Image.merge("RGBA", (
-            Image.new("L", overlay.size, tint_color[0]),
-            Image.new("L", overlay.size, tint_color[1]),
-            Image.new("L", overlay.size, tint_color[2]),
-            a
-        ))
-        overlay = tinted
+def tint(image, coordinate, color=(255, 255, 255, 255)):
+    overlay = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    overlay.putpixel(coordinate, color)
     return Image.alpha_composite(image, overlay)
+
+def overlay(base, layer):
+    with open(f"assets/{layer}.json") as file:
+        metadata = json.load(file)
+    layer_image = Image.open(f"assets/{layer}.png")
+    tint_color = random_color(200)
+    for coord in metadata['coordinates']:
+        layer_image = tint(layer_image, coord, tint_color)
+    return Image.alpha_composite(base, layer_image)
+
+def random_color(alpha):
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), alpha)
 
 if __name__ == "__main__":
     main()
