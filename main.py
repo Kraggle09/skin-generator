@@ -10,12 +10,22 @@ def main():
 
 def randomSkin():
     img = Image.new('RGBA', (64, 64), (0, 0, 0, 0))
-    img = overlay(img, f"assets/{random.choice(baseList)}")
-    img = overlay(img, f"assets/{random.choice(hairList)}")
+    img = overlayAndTint(img, f"assets/{random.choice(baseList)}")
+    img = overlayAndTint(img, f"assets/{random.choice(hairList)}", (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 100))
     return img
 
-def overlay(image, overlay):
-    return Image.alpha_composite(image, Image.open(overlay))
+def overlayAndTint(image, overlay_path, tint_color=None):
+    overlay = Image.open(overlay_path).convert("RGBA")
+    if tint_color:
+        a = overlay.split()[3]
+        tinted = Image.merge("RGBA", (
+            Image.new("L", overlay.size, tint_color[0]),
+            Image.new("L", overlay.size, tint_color[1]),
+            Image.new("L", overlay.size, tint_color[2]),
+            a
+        ))
+        overlay = tinted
+    return Image.alpha_composite(image, overlay)
 
 if __name__ == "__main__":
     main()
