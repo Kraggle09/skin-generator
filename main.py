@@ -1,6 +1,5 @@
 from PIL import Image
 import random
-import json
 import os
 
 baseList = ['base0']
