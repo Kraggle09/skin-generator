@@ -4,7 +4,7 @@ import os
 
 baseList = ['base0']
 hairList = ['hair0', 'hair1']
-eyeList = ['eye1']
+eyeList = ['eye2']
 
 def main():
     skin = randomSkin()
