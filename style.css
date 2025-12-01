@@ -4,6 +4,10 @@
     image-rendering: pixelated;
 }
 
+.skin {
+    visibility: hidden;
+}
+
 .examples {
     height: 256px;
     width: 256px;
